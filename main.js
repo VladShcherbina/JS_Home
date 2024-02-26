@@ -29,3 +29,10 @@ for(i = 0; i < 3; i++) {
     table.appendChild(tr);
 }
 
+
+const BOARD = [
+    ['O', 'X', ''],
+    ['O', '0', 'X'],
+    ['O', 'X', '0'],
+]
+
