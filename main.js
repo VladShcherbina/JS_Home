@@ -1,38 +1,64 @@
-const table = document.querySelector('#myTable')
-let isTrue = true
+let addMessage = document.querySelector('.message');
+let addButton = document.querySelector('.add');
+let todo = document.querySelector('.todo')
 
-for(i = 0; i < 3; i++) {
-    let tr = document.createElement('tr');
+let todoList = [];
 
-    for(j = 0; j < 3; j++) {
-        let td = document.createElement('td');
-        td.style.fontSize = '40px'
-        td.style.textAlign = 'center' 
-        td.style.border = '2px solid #000000'
-        td.style.width = '400px'
-        td.style.height = '300px'
-		tr.appendChild(td);
-        td.addEventListener('click', () => {
-            if(isTrue) {
-                td.textContent = 'X'
-                isTrue = false 
-            } else {
-                td.textContent = 'O'
-                isTrue = true
-            }
-            // isTrue = !isTrue
-        })
-        
+if(localStorage.getItem('todo')) {
+    todoList = JSON.parse(localStorage.getItem('todo'))
+    displayMessages()
+}
+addButton.addEventListener('click', () => {
+    if(!addMessage.value) return
+    let newTodo = {
+        todo: addMessage.value,
+        checked: false,
+        important: false
     }
-    
 
-    table.appendChild(tr);
+    todoList.push(newTodo)
+    displayMessages()
+    localStorage.setItem('todo', JSON.stringify(todoList))
+    addMessage.value = ''
+})
+
+function displayMessages() {
+    let displayMessage = ''
+    if(todoList.length === 0) todo.innerHTML = ''
+    todoList.forEach((item, i) => {
+      displayMessage += `
+      <li>
+      <input type='checkbox' id='item_${i}' ${item.checked ? 'checked' : ''}>
+      <label  for='item_${i}' class= "${item.important ? 'importante' : ''}">${item.todo}</label>
+      </li>`
+      todo.innerHTML = displayMessage
+    })
 }
 
+todo.addEventListener('change', (event) => {
+    // let idInput = event.target.getAttribute('id')
+    // let forLabel = todo.querySelector('[for='+ idInput +']')
+    let valueLabel = todo.querySelector('[for='+ event.target.getAttribute('id') +']').innerHTML
+    todoList.forEach((item) => {
+        if(item.todo === valueLabel) {
+            item.checked = !item.checked
+            localStorage.setItem('todo', JSON.stringify(todoList))
+        }
+    })
+})
 
-const BOARD = [
-    ['O', 'X', ''],
-    ['O', '0', 'X'],
-    ['O', 'X', '0'],
-]
+todo.addEventListener('contextmenu', function(event) {
+    event.preventDefault()
+    todoList.forEach((item, i) => {
+        if(item.todo === event.target.innerHTML) {
+            if(event.ctrlKey || event.metaKey) {
+                todoList.splice(i, 1)
+            } else {
+                item.important = !item.important
+            }
+            displayMessages()
+            localStorage.setItem('todo', JSON.stringify(todoList))
+        }
+    })
+})
 
