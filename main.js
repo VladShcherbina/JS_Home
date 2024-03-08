@@ -28,8 +28,8 @@ function displayMessages() {
     todoList.forEach((item, i) => {
       displayMessage += `
       <li>
-      <input type='checkbox' id='item_${i}' ${item.checked ? 'checked' : ''}>
-      <label  for='item_${i}' class= "${item.important ? 'importante' : ''}">${item.todo}</label>
+        <input type='checkbox' id='item_${i}' ${item.checked ? 'checked' : ''}>
+        <label id='label-${i}'  for='item_${i}' class="${item.important ? 'important' : ''}">${item.todo}</label>
       </li>`
       todo.innerHTML = displayMessage
     })
@@ -49,8 +49,13 @@ todo.addEventListener('change', (event) => {
 
 todo.addEventListener('contextmenu', function(event) {
     event.preventDefault()
+
+    const inputTag = document.getElementById(event.target.id)
+    const refferedLabel = inputTag.nextElementSibling.innerHTML
+
     todoList.forEach((item, i) => {
-        if(item.todo === event.target.innerHTML) {
+        if(item.todo === refferedLabel) {
+            console.log('key: ', event.metaKey)
             if(event.ctrlKey || event.metaKey) {
                 todoList.splice(i, 1)
             } else {
@@ -61,4 +66,3 @@ todo.addEventListener('contextmenu', function(event) {
         }
     })
 })
-
